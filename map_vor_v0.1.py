@@ -11,48 +11,19 @@ import matplotlib.pyplot as plt
 
 # Esempio di comando per eseguirlo:
 # python map_vor_v0.1.py -i /Users/gab/Desktop/watermaps/solvent_accessibility.stride5_dist18.00_samples200.txt --vo true
-# Path di output ora e` default dove si sta eseguendo il file!
+# Path di output ora e` default dove si sta eseguendo il file! Inoltre e` possibile passare piu input allo stesso tempo anche
+# da cartelle differenti (senza path cerca dove si sta eseguendo il file): es: -i file1.txt C:\Users\file2.txt file3.txt
 # Ci sono varie flag, per vederle:
 # python map_vor_v0.1.py --help
 # Per eseguire lo script da spyder fare (CTRL + F6): >run>configuration per file
 # In General Setting abilitare Command Line Option inserendo i vari comandi nel riquadro a destra dell'opzione
 # Infine eseguire il file tramite run
-
-if __name__ == "__main__":
-
-    parser = argparse.ArgumentParser(
-        description='Script to create a spherical mesh from heatmap data.')
-    parser.add_argument("-i", "--input", type=str, dest='inp',
-                        help="Input path to .txt data")
-    parser.add_argument("-o", "--output", type=str, dest='out', default=(os.path.abspath(os.path.dirname(sys.argv[0]))),
-                        help="Output path for generated files.")
-    parser.add_argument("-l", "--list", type=int, dest="col",
-                        nargs="+", default=[5, 7, 8], help="Columns of the data")
-    parser.add_argument("-n", "--number", type=int, dest='n',
-                        help="Number of interpolations points and mesh",
-                        default=50)
-    parser.add_argument("-d", "--dpi", type=int, dest='dpi',
-                        help="Dpi of the images.",
-                        default=150)
-    parser.add_argument("-vo", "--voronoi", type=bool, dest='vorplot',
-                        help="Plot the voronoi tassellation for the points", default=False)
-    parser.add_argument("-cbar", "--colorbar", type=bool, dest='bar',
-                        help="Plot a dummy graph with the colorbar.", default=False)
-    parser.add_argument("-f", "--file", type=str, dest='format',
-                        help="File format to save images.", default="png")
-    # parser.add_argument("-r", "--radius", type=int, dest='radius',
-    #                    help="Radius of the spherical mesh", default=32)
-    # parser.add_argument("-m", "--mesh", type=bool, dest='mesh',
-    #                    help="Create mesh", default=False)
-    # parser.add_argument("-v", "--visualize", type=bool, dest='visualize',
-    #                    help="Flag to display the mesh", default=False)
-    args = parser.parse_args()
-
-    basename = os.path.basename(args.inp).rsplit('.', 1)[
-        0]  # Remove the file format
+def main(in_file, args):
+    basename = os.path.basename(in_file).rsplit(
+        '.', 1)[0]  # Remove the file format
     t, c, v = (array(args.col)-1)
-    array = loadtxt(args.inp)
-    theta, cosphi, valore = array[:, t], array[:, c], array[:, v]
+    arr = loadtxt(in_file)
+    theta, cosphi, valore = arr[:, t], arr[:, c], arr[:, v]
 
     # Interpolation of the data points to construct the 2D heatmap
     x, y, z = theta, cosphi, valore
@@ -115,6 +86,42 @@ if __name__ == "__main__":
         cbar.ax.set_yticklabels(['0', '0.2', '0.4', '0.6', '0.8', '1'])
         path = os.path.join(args.out, f"colorbar.{basename}.{args.format}")
         plt.savefig(path, dpi=args.dpi, bbox_inches='tight')
+
+
+if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser(
+        description='Script to create a spherical mesh from heatmap data.')
+    parser.add_argument("-i", "--input", type=str, dest='inp', default=[],
+                        nargs="+", help="Input path/paths to .txt data")
+    parser.add_argument("-o", "--output", type=str, dest='out', default=(os.path.abspath(os.path.dirname(sys.argv[0]))),
+                        help="Output path for generated files.")
+    parser.add_argument("-l", "--list", type=int, dest="col",
+                        nargs="+", default=[5, 7, 8], help="Columns of the data")
+    parser.add_argument("-n", "--number", type=int, dest='n',
+                        help="Number of interpolations points and mesh",
+                        default=50)
+    parser.add_argument("-d", "--dpi", type=int, dest='dpi',
+                        help="Dpi of the images.",
+                        default=150)
+    parser.add_argument("-vo", "--voronoi", type=bool, dest='vorplot',
+                        help="Plot the voronoi tassellation for the points", default=False)
+    parser.add_argument("-cbar", "--colorbar", type=bool, dest='bar',
+                        help="Plot a dummy graph with the colorbar.", default=False)
+    parser.add_argument("-f", "--file", type=str, dest='format',
+                        help="File format to save images.", default="png")
+    # parser.add_argument("-r", "--radius", type=int, dest='radius',
+    #                    help="Radius of the spherical mesh", default=32)
+    # parser.add_argument("-m", "--mesh", type=bool, dest='mesh',
+    #                    help="Create mesh", default=False)
+    # parser.add_argument("-v", "--visualize", type=bool, dest='visualize',
+    #                    help="Flag to display the mesh", default=False)
+    args = parser.parse_args()
+    for in_file in args.inp:
+        try:
+            main(in_file, args)
+        except OSError as error:
+            print("WARNING:", error)
 
     """ Edited out as now it s not important
     if args.mesh:
