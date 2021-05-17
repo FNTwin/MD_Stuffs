@@ -10,7 +10,7 @@ from matplotlib.colors import Normalize
 import matplotlib.pyplot as plt
 
 # Esempio di comando per eseguirlo:
-# python map_vor_v0.1.py -i /Users/gab/Desktop/watermaps/solvent_accessibility.stride5_dist18.00_samples200.txt --vo true
+# python map_vor_v0.4.py -i /Users/gab/Desktop/watermaps/solvent_accessibility.stride5_dist18.00_samples200.txt --vo true
 # Il Path di output ora e` di default quello dove si sta eseguendo il file! Inoltre e` possibile passare piu input allo stesso tempo anche
 # da cartelle differenti (senza path cerca dove si sta eseguendo il file): es: -i file1.txt C:\Users\file2.txt file3.txt
 # Per la produzione massica di grafici basta passare il path di una o piu cartelle, es: -i directory1\ directory2
@@ -144,13 +144,6 @@ if __name__ == "__main__":
     parser.add_argument("-f", "--file", type=str, dest='format',
                         help="File format to save images.", default="png")
 
-    # parser.add_argument("-r", "--radius", type=int, dest='radius',
-    #                    help="Radius of the spherical mesh", default=32)
-    # parser.add_argument("-m", "--mesh", type=bool, dest='mesh',
-    #                    help="Create mesh", default=False)
-    # parser.add_argument("-v", "--visualize", type=bool, dest='visualize',
-    #                    help="Flag to display the mesh", default=False)
-
     args = parser.parse_args()
     files = []
     for i, input_path in enumerate(args.inp):
@@ -166,36 +159,3 @@ if __name__ == "__main__":
             main(in_file, args)
         except OSError as error:
             print("WARNING:", error)
-
-    """ Edited out as now it s not important
-    if args.mesh:
-        try:
-            import pyvista as pv
-
-        except ImportError as error:
-            raise error
-
-        # Construction of the spherical mesh
-
-        xx, yy, zz = np.meshgrid(np.radians(np.linspace(0, 361, args.n+1)),
-                                 np.radians(np.linspace(-90, 90, args.n+1)),
-                                 [0])
-
-        radius = args.radius
-        x = radius * np.cos(yy) * np.cos(xx)
-        y = radius * np.cos(yy) * np.sin(xx)
-        z = radius * np.sin(yy)
-
-        grid = pv.StructuredGrid(x, y, z)
-        grid.cell_arrays['test'] = np.array(idx).ravel(order="F")
-        grid.save(args.out + "mesh.vtk", binary=True)
-
-        if args.visualize:
-            p = pv.Plotter()
-            p.add_mesh(grid, interpolate_before_map=True)
-            p.link_views()
-            p.camera_position = [(-500, -150, 150),
-                                 (15.0, 0.0, 0.0),
-                                 (0.00, 0.37, 0.93)]
-            p.show()
-    """
