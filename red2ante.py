@@ -2,6 +2,7 @@ import os
 import argparse
 import sys
 
+#Simple script to convert RED Server mol2 charges to the Amber format
 
 def read(path):
 	with open(path, "r") as file:
@@ -68,4 +69,4 @@ if __name__ == "__main__":
 	try:
 		main(args)
 	except OSError as error:
-		print("WARNING:", error)
+		raise error
