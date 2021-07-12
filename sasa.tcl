@@ -8,7 +8,7 @@
 #                                    #
 ######################################
 
-set path "/home/merk/Desktop/render_traj/SASA_results" #Path to store results
+set path [pwd]
 set selmode "resname L13 L10 NP TPH" #Change selection to include all the residues
 set probe 2.38 #Probe radius
 set sel [atomselect top "$selmode"]
